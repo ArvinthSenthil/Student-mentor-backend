@@ -27,7 +27,7 @@ async function createConnection() {
 }
 export const client = await createConnection()
 
-const port = process.env.PORT
+const PORT = process.env.PORT
 
 app.get('/', function (req, res) {
   res.send('Hello World ')
