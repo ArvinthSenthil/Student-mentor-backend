@@ -36,6 +36,6 @@ app.get('/', function (req, res) {
 app.use('/students', studentsRoutes)
 app.use('/mentors', mentorRoutes)
 
-app.listen(port, () => {
-  console.log(`server started at ${port}`)
+app.listen(PORT, () => {
+  console.log(`server started at ${PORT}`)
 })
