@@ -1,41 +1,33 @@
 // const express = require('express')
-import express from 'express'
-const app = express()
-import { MongoClient } from 'mongodb'
-import dotenv from 'dotenv'
-import cors from 'cors'
-import { studentsRoutes } from './routes/students.js'
-import { mentorRoutes } from './routes/mentor.js'
+import express from "express";
+import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
-dotenv.config()
+import router from "./routes/productroute.js";
+import userroute from "./routes/userroute.js";
+import orderRoute from "./routes/orderRoute.js";
+dotenv.config();
 
-//third party middleware
-app.use(cors())
+connectDB();
+const app = express();
+app.use(express.json());
 
-// inbuild middleware
-app.use(express.json())
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+app.use("/products", router);
+app.use("/users", userroute);
+app.use("/orders", orderRoute);
 
-// const MONGO_URL = "mongodb://localhost";
+app.get("/config/paypal", (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
 
-const MONGO_URL = process.env.MONGO_URL
+app.use(notFound);
 
-async function createConnection() {
-  const client = new MongoClient(MONGO_URL)
-  await client.connect()
-  console.log('Mongo is connected ✌️😊')
-  return client
-}
-export const client = await createConnection()
+app.use(errorHandler);
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 5000;
 
-app.get('/', function (req, res) {
-  res.send('Hello World ')
-})
-
-app.use('/students', studentsRoutes)
-app.use('/mentors', mentorRoutes)
-
-app.listen(PORT, () => {
-  console.log(`server started at ${PORT}`)
-})
+app.listen(PORT, console.log(`server running on port ${PORT}`));
